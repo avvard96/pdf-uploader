@@ -11,7 +11,7 @@
                     <p>
                         Please upload auth configuration JSON to connect your Google Drive account.
                     </p>
-                    {!! Form::open(array('route' => 'home.uploadConfig', 'enctype' => 'multipart/form-data')) !!}
+                    {!! Form::open(array('route' => 'site.uploadConfig', 'enctype' => 'multipart/form-data')) !!}
 
                     <div class="row cancel">
                         <div class="col-md-12">
@@ -29,7 +29,7 @@
                     <p>
                         Please fill your Gmail credentials to upload files to Google Drive.
                     </p>
-                    {!! Form::open(array('route' => 'home.uploadFromMail', 'enctype' => 'multipart/form-data')) !!}
+                    {!! Form::open(array('route' => 'site.uploadFromMail', 'enctype' => 'multipart/form-data')) !!}
                     <div class="row cancel">
 
                         <div class="col-md-12">

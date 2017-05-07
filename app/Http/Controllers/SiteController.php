@@ -13,16 +13,17 @@ use Ddeboer\Imap\Exception\MailboxDoesNotExistException;
 use Hypweb\Flysystem\GoogleDrive\GoogleDriveAdapter;
 use League\Flysystem\Filesystem;
 
-class HomeController extends Controller
+class SiteController extends Controller
 {
     /**
+     * Shows main forms and stores OAuth2 token
      * @param Request $request
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\Http\RedirectResponse|\Illuminate\View\View
      */
     public function index(Request $request)
     {
         if (Storage::disk('local')->exists('config.json') && !session()->has('access_token')) {
-            $redirectUri = route('home.index');
+            $redirectUri = route('site.index');
             try {
                 $client = new \Google_Client();
                 $client->setAuthConfig(storage_path() . '/app/config.json');
@@ -34,7 +35,7 @@ class HomeController extends Controller
                     $token = $client->fetchAccessTokenWithAuthCode($code);
                     $client->setAccessToken($token);
                     session(['access_token' => $token]);
-                    return redirect()->route('home.index');
+                    return redirect()->route('site.index');
                 } else {
                     return redirect()->to($authUrl);
                 }
@@ -44,12 +45,12 @@ class HomeController extends Controller
                 Storage::disk('local')->delete('config.json');
                 $request->session()->forget('access_token');
                 $request->session()->flash('message', $errorMessage);
-                return redirect()->route('home.index');
+                return redirect()->route('site.index');
             }
             catch (\Google_Exception $e) {
                 $errorMessage = 'Google_Exception: ' . $e->getMessage();
                 $request->session()->flash('message', $errorMessage);
-                return redirect()->route('home.index');
+                return redirect()->route('site.index');
             }
         } else {
             return view('pages.index', [
@@ -59,6 +60,8 @@ class HomeController extends Controller
     }
 
     /**
+     * Uploads JSON configuration to server.
+     *
      * @param Request $request
      * @return \Illuminate\Http\RedirectResponse
      */
@@ -78,7 +81,7 @@ class HomeController extends Controller
     }
 
     /**
-     * Upload pdfs from Gmail account to Google Drive.
+     * Uploads pdfs from Gmail account to Google Drive.
      *
      * @param Request $request
      * @return \Illuminate\Http\Response
@@ -93,7 +96,7 @@ class HomeController extends Controller
                 $client->setAccessToken($access_token);
                 if ($client->isAccessTokenExpired()) {
                     $request->session()->forget('access_token');
-                    return redirect()->route('home.index');
+                    return redirect()->route('site.index');
                 }
                 $service = new \Google_Service_Drive($client);
                 $adapter = new GoogleDriveAdapter($service);
@@ -104,15 +107,15 @@ class HomeController extends Controller
                 Storage::disk('local')->delete('config.json');
                 $request->session()->forget('access_token');
                 $request->session()->flash('message', $errorMessage);
-                return redirect()->route('home.index');
+                return redirect()->route('site.index');
             }
             catch (\Google_Exception $e) {
                 $errorMessage = 'Google_Exception: ' . $e->getMessage();
                 $request->session()->flash('message', $errorMessage);
-                return redirect()->route('home.index');
+                return redirect()->route('site.index');
             }
         } else {
-            return redirect()->route('home.index');
+            return redirect()->route('site.index');
         }
 
         $server = new Server('imap.gmail.com');
@@ -147,6 +150,6 @@ class HomeController extends Controller
             $request->session()->flash('message', $errorMessage);
         }
 
-        return redirect()->route('home.index');
+        return redirect()->route('site.index');
     }
 }

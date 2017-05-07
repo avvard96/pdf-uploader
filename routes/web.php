@@ -11,11 +11,6 @@
 |
 */
 
-//Route::get('/', function () {
-//    return view('welcome');
-//});
-
-Route::get('/', 'HomeController@index')->name('home.index');
-Route::get('/test', 'HomeController@test')->name('home.test');
-Route::post('/upload-config', 'HomeController@uploadConfig')->name('home.uploadConfig');
-Route::post('/upload-from-mail', 'HomeController@uploadFromMail')->name('home.uploadFromMail');
+Route::get('/', 'SiteController@index')->name('site.index');
+Route::post('/upload-config', 'SiteController@uploadConfig')->name('site.uploadConfig');
+Route::post('/upload-from-mail', 'SiteController@uploadFromMail')->name('site.uploadFromMail');
